@@ -1,4 +1,4 @@
-import Sval from '../src'
+import {Sval} from '../src'
 
 describe('testing src/index.ts', () => {
   it('should declare var normally', () => {  

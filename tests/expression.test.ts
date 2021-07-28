@@ -1,4 +1,4 @@
-import Sval from '../src'
+import {Sval} from '../src'
 
 describe('testing src/expression.ts', () => {
   it('should call expression run normally', () => {  

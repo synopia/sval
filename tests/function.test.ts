@@ -1,4 +1,4 @@
-import Sval from '../src'
+import {Sval} from '../src'
 
 describe('testing src/index.ts', () => {
   it('should excute function normally', () => {  
@@ -111,7 +111,7 @@ describe('testing src/index.ts', () => {
         done()
       }
     `)
-    function getItem(n) {
+    function getItem(n:any) {
       return new Promise(resolve => setTimeout(resolve, 5, n))
     }
   })

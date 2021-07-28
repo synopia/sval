@@ -68,3 +68,13 @@ typings/
 
 # next.js build output
 .next
+
+.idea/
+*.iml
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*

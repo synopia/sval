@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "es6"],
+    "target": "esnext",
+    "lib": ["dom", "es6", "ESNext.AsyncIterable"],
     "declaration": true,
     "noImplicitAny": true,
     "removeComments": true,
     "resolveJsonModule": true,
     "downlevelIteration": true,
+    "moduleResolution": "Node",
     "declarationDir": "types"
   },
   "include": [

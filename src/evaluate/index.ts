@@ -1,5 +1,4 @@
 import { assign } from '../share/util'
-import { Node } from 'estree'
 import Scope from '../scope'
 
 import * as declaration from './declaration'
@@ -8,11 +7,12 @@ import * as identifier from './identifier'
 import * as statement from './statement'
 import * as literal from './literal'
 import * as pattern from './pattern'
+import {ESTree} from "meriyah";
 /*<add>*//*import * as program from './program'*//*</add>*/
 
 let evaluateOps: any
 
-export default function* evaluate(node: Node, scope: Scope) {
+export default function* evaluate(node: ESTree.Node, scope: Scope) {
   if (!node) return
 
   // delay initalizing to remove circular reference issue for jest

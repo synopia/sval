@@ -1,4 +1,4 @@
-import Sval from '../src'
+import {Sval} from '../src'
 
 describe('testing src/index.ts', () => {
   it('should for statement run normally', () => {  
@@ -210,7 +210,7 @@ describe('testing src/index.ts', () => {
   })
   
   it('should try statement run normally', () => {  
-    const interpreter = new Sval({ ecmaVer: 10 })
+    const interpreter = new Sval({})
     interpreter.run(`
       try {
         throw 1

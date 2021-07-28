@@ -1,15 +1,6 @@
-import { readFileSync, existsSync } from 'fs'
-import Sval, { SvalOptions } from '../src'
-import { resolve } from 'path'
+import {Sval} from '../src'
 
-let code: string
-
-const codePath = resolve(__dirname, '../dist/sval.min.js')
-if (existsSync(codePath)) {
-  code = readFileSync(codePath, 'utf-8')
-} else {
-  code = "const msg = 'fisrt build'"
-}
+const code = "const msg = 'first build'"
 
 describe('testing src/index.ts', () => {
   it('should compile normally', () => {  
@@ -54,16 +45,6 @@ describe('testing src/index.ts', () => {
     expect((window as any).y2).toBeUndefined()
   })
 
-  it('should support ecma version 3, 5, 6, 7, 8, 9, 10', () => {
-    const versions = [3, 5, 6, 7, 8, 9, 10, 2015, 2016, 2017, 2018, 2019]
-    versions.forEach((v: SvalOptions['ecmaVer']) => new Sval({ ecmaVer: v }))
-
-    try {
-      new Sval({ ecmaVer: 4 as any })
-    } catch(ex) {
-      expect(ex.message).toBe('unsupported ecmaVer')
-    }
-  })
 
   it('should support import module object to engine', () => {
     const bar = 'bar'

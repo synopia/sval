@@ -2,12 +2,12 @@ import { pattern, createFunc, createClass } from './helper'
 import { define, getDptor, assign } from '../share/util'
 import { NOINIT, DEADZONE } from '../share/const'
 import { VarKind } from '../scope/variable'
-import * as estree from 'estree'
 import Scope from '../scope'
 import evaluate from '.'
+import {ESTree} from "meriyah";
 
 export function* FunctionDeclaration(
-  node: estree.FunctionDeclaration,
+  node: ESTree.FunctionDeclaration,
   scope: Scope
 ): IterableIterator<any> {
   scope.func(node.id.name, createFunc(node, scope))
@@ -20,7 +20,7 @@ export interface VariableDeclarationOptions {
 }
 
 export function* VariableDeclaration(
-  node: estree.VariableDeclaration,
+  node: ESTree.VariableDeclaration,
   scope: Scope,
   options: VariableDeclarationOptions = {},
 ) {
@@ -34,7 +34,7 @@ export interface VariableDeclaratorOptions {
 }
 
 export function* VariableDeclarator(
-  node: estree.VariableDeclarator,
+  node: ESTree.VariableDeclarator,
   scope: Scope,
   options: VariableDeclaratorOptions & VariableDeclarationOptions = {},
 ) {
@@ -44,7 +44,7 @@ export function* VariableDeclarator(
       if (node.id.type === 'Identifier') {
         scope[kind](node.id.name, onlyBlock ? DEADZONE : kind === 'var' ? NOINIT : undefined)
       } else {
-        yield* pattern(node.id, scope, { kind, hoist, onlyBlock })
+        yield* pattern(node.id as any, scope, { kind, hoist, onlyBlock })
       }
     }
   } else {
@@ -69,13 +69,13 @@ export function* VariableDeclarator(
         })
       }
     } else {
-      yield* pattern(node.id, scope, { kind, feed: value })
+      yield* pattern(node.id as any, scope, { kind, feed: value })
     }
   }
 }
 
 export function* ClassDeclaration(
-  node: estree.ClassDeclaration,
+  node: ESTree.ClassDeclaration,
   scope: Scope
 ): IterableIterator<any> {
   scope.func(node.id.name, yield* createClass(node, scope))
@@ -86,15 +86,15 @@ export interface ClassOptions {
   superClass?: (...args: any[]) => void
 }
 
-export function* ClassBody(node: estree.ClassBody, scope: Scope, options: ClassOptions = {}) {
+export function* ClassBody(node: ESTree.ClassBody, scope: Scope, options: ClassOptions = {}) {
   const { klass, superClass } = options
 
   for (let i = 0; i < node.body.length; i++) {
-    yield* MethodDefinition(node.body[i], scope, { klass, superClass })
+    yield* MethodDefinition(node.body[i] as any, scope, {klass, superClass})
   }
 }
 
-export function* MethodDefinition(node: estree.MethodDefinition, scope: Scope, options: ClassOptions = {}) {
+export function* MethodDefinition(node: ESTree.MethodDefinition, scope: Scope, options: ClassOptions = {}) {
   const { klass, superClass } = options
 
   let key: string

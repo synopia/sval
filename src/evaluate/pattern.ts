@@ -3,9 +3,9 @@ import { VarKind } from '../scope/variable'
 import { Identifier } from './identifier'
 import { assign } from '../share/util'
 import { pattern } from './helper'
-import * as estree from 'estree'
 import Scope from '../scope'
 import evaluate from '.'
+import {ESTree} from "meriyah";
 
 export interface PatternOptions {
   kind?: VarKind
@@ -14,7 +14,7 @@ export interface PatternOptions {
   feed?: any
 }
 
-export function* ObjectPattern(node: estree.ObjectPattern, scope: Scope, options: PatternOptions = {}) {
+export function* ObjectPattern(node: ESTree.ObjectPattern, scope: Scope, options: PatternOptions = {}) {
   const { kind = 'var', hoist = false, onlyBlock = false, feed = {} } = options
   const fedKeys: string[] = []
   for (let i = 0; i < node.properties.length; i++) {
@@ -26,7 +26,7 @@ export function* ObjectPattern(node: estree.ObjectPattern, scope: Scope, options
           if (value.type === 'Identifier') {
             scope[kind](value.name, onlyBlock ? DEADZONE : kind === 'var' ? NOINIT : undefined)
           } else {
-            yield* pattern(value, scope, { kind, hoist, onlyBlock })
+            yield* pattern(value as any, scope, { kind, hoist, onlyBlock })
           }
         } else {
           yield* RestElement(property as any, scope, { kind, hoist, onlyBlock })
@@ -37,7 +37,7 @@ export function* ObjectPattern(node: estree.ObjectPattern, scope: Scope, options
       if (property.computed) {
         key = yield* evaluate(property.key, scope)
       } else {
-        key = (property.key as estree.Identifier).name
+        key = (property.key as ESTree.Identifier).name
       }
       fedKeys.push(key)
       
@@ -45,7 +45,7 @@ export function* ObjectPattern(node: estree.ObjectPattern, scope: Scope, options
       if (value.type === 'Identifier') {
         scope[kind](value.name, feed[key])
       } else {
-        yield* pattern(value, scope, { kind, feed: feed[key] })
+        yield* pattern(value as any, scope, { kind, feed: feed[key] })
       }
     } else {
       const rest = assign({}, feed)
@@ -55,7 +55,7 @@ export function* ObjectPattern(node: estree.ObjectPattern, scope: Scope, options
   }
 }
 
-export function* ArrayPattern(node: estree.ArrayPattern, scope: Scope, options: PatternOptions = {}) {
+export function* ArrayPattern(node: ESTree.ArrayPattern, scope: Scope, options: PatternOptions = {}) {
   const { kind, hoist = false, onlyBlock = false, feed = [] } = options
   const result = []
   for (let i = 0; i < node.elements.length; i++) {
@@ -66,7 +66,7 @@ export function* ArrayPattern(node: estree.ArrayPattern, scope: Scope, options: 
         if (element.type === 'Identifier') {
           scope[kind](element.name, onlyBlock ? DEADZONE : kind === 'var' ? NOINIT : undefined)
         } else {
-          yield* pattern(element, scope, { kind, hoist, onlyBlock })
+          yield* pattern(element as any, scope, { kind, hoist, onlyBlock })
         }
       }
     } else if (element.type === 'Identifier') {
@@ -82,7 +82,7 @@ export function* ArrayPattern(node: estree.ArrayPattern, scope: Scope, options: 
     } else if (element.type === 'RestElement') {
       yield* RestElement(element, scope, { kind, feed: feed.slice(i) })
     } else {
-      yield* pattern(element, scope, { kind, feed: feed[i] })
+      yield* pattern(element as any, scope, { kind, feed: feed[i] })
     }
   }
   if (result.length) {
@@ -90,7 +90,7 @@ export function* ArrayPattern(node: estree.ArrayPattern, scope: Scope, options: 
   }
 }
 
-export function* RestElement(node: estree.RestElement, scope: Scope, options: PatternOptions = {}) {
+export function* RestElement(node: ESTree.RestElement, scope: Scope, options: PatternOptions = {}) {
   const { kind, hoist = false, onlyBlock = false, feed = [] } = options
   const arg = node.argument
   if (hoist) {
@@ -98,7 +98,7 @@ export function* RestElement(node: estree.RestElement, scope: Scope, options: Pa
       if (arg.type === 'Identifier') {
         scope[kind](arg.name, onlyBlock ? DEADZONE : kind === 'var' ? NOINIT : undefined)
       } else {
-        yield* pattern(arg, scope, { kind, hoist, onlyBlock })
+        yield* pattern(arg as any, scope, { kind, hoist, onlyBlock })
       }
     }
   } else if (arg.type === 'Identifier') {
@@ -111,11 +111,11 @@ export function* RestElement(node: estree.RestElement, scope: Scope, options: Pa
       variable.set(feed)
     }
   } else {
-    yield* pattern(arg, scope, { kind, feed })
+    yield* pattern(arg as any, scope, { kind, feed })
   }
 }
 
-export function* AssignmentPattern(node: estree.AssignmentPattern, scope: Scope, options: PatternOptions = {}) {
+export function* AssignmentPattern(node: ESTree.AssignmentPattern, scope: Scope, options: PatternOptions = {}) {
   const { kind = 'var', hoist = false, onlyBlock = false, feed = yield* evaluate(node.right, scope) } = options
   const left = node.left
   if (hoist) {

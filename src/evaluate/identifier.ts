@@ -1,13 +1,13 @@
 import { DEADZONE } from '../share/const'
-import * as estree from 'estree'
 import Scope from '../scope'
+import {ESTree} from "meriyah";
 
 export interface IdentifierOptions {
   getVar?: boolean
   throwErr?: boolean
 }
 
-export function* Identifier(node: estree.Identifier, scope: Scope, options: IdentifierOptions = {}) {
+export function* Identifier(node: ESTree.Identifier, scope: Scope, options: IdentifierOptions = {}) {
   const { getVar = false, throwErr = true } = options
 
   if (node.name === 'undefined') {

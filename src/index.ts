@@ -1,18 +1,16 @@
 import { getOwnNames, createSandBox, globalObj, assign } from './share/util'
 import { version } from '../package.json'
-import { parse, Options } from 'acorn'
-import { Node, Program } from 'estree'
 import Scope from './scope'
 
 import { hoist } from './evaluate_n/helper'
 import evaluate from './evaluate_n'
+import {ESTree, Options, parseScript} from "meriyah";
 
-export interface SvalOptions {
-  ecmaVer?: 3 | 5 | 6 | 7 | 8 | 9 | 10 | 2015 | 2016 | 2017 | 2018 | 2019
+export type SvalOptions = Options & {
   sandBox?: boolean
 }
 
-class Sval {
+export class Sval {
   static version: string = version
 
   private options: Options = {}
@@ -21,15 +19,7 @@ class Sval {
   exports: { [name: string]: any } = {}
 
   constructor(options: SvalOptions = {}) {
-    let { ecmaVer = 9, sandBox = true } = options
-
-    ecmaVer -= ecmaVer < 2015 ? 0 : 2009 // format ecma edition
-
-    if ([3, 5, 6, 7, 8, 9, 10].indexOf(ecmaVer) === -1) {
-      throw new Error(`unsupported ecmaVer`)
-    }
-
-    this.options.ecmaVersion = ecmaVer as Options['ecmaVersion']
+    let { sandBox = true } = options
 
     if (sandBox) {
       // Shallow clone to create a sandbox
@@ -63,14 +53,18 @@ class Sval {
     if (typeof parser === 'function') {
       return parser(code, assign({}, this.options))
     }
-    return parse(code, this.options)
+    return parseScript(code, this.options)
   }
 
-  run(code: string | Node) {
-    const ast = typeof code === 'string' ? parse(code, this.options) as Node : code
-    hoist(ast as Program, this.scope)
+  run(code: string | ESTree.Program) {
+    let ast: ESTree.Program
+    if( typeof code === 'string' ) {
+      ast = parseScript(code, this.options)
+    } else {
+      ast = code
+    }
+    hoist(ast, this.scope)
     evaluate(ast, this.scope)
   }
 }
 
-export default Sval
