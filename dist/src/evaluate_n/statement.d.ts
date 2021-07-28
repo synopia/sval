@@ -1,4 +1,4 @@
-import Scope from '../scope';
+import { Scope } from '../scope';
 import { ESTree } from "meriyah";
 export declare function ExpressionStatement(node: ESTree.ExpressionStatement, scope: Scope): void;
 export interface BlockOptions {

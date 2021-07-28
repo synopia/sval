@@ -4,7 +4,7 @@ import { pattern, createFunc, createClass } from './helper'
 import { Variable, Prop } from '../scope/variable'
 import { Identifier } from './identifier'
 import { Literal } from './literal'
-import Scope from '../scope'
+import {Scope} from '../scope'
 import evaluate from '.'
 import {ESTree} from "meriyah";
 

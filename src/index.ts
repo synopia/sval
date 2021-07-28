@@ -1,10 +1,9 @@
-import { getOwnNames, createSandBox, globalObj, assign } from './share/util'
-import { version } from '../package.json'
-import Scope from './scope'
-
-import { hoist } from './evaluate_n/helper'
-import evaluate from './evaluate_n'
 import {ESTree, Options, parseScript} from "meriyah";
+import {assign, createSandBox, getOwnNames, globalObj} from './share/util'
+import {version} from '../package.json'
+import {Scope} from './scope'
+import {hoist} from './evaluate_n/helper'
+import evaluate from './evaluate_n'
 
 export type SvalOptions = Options & {
   sandBox?: boolean

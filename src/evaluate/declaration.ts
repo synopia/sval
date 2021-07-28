@@ -2,7 +2,7 @@ import { pattern, createFunc, createClass } from './helper'
 import { define, getDptor, assign } from '../share/util'
 import { NOINIT, DEADZONE } from '../share/const'
 import { VarKind } from '../scope/variable'
-import Scope from '../scope'
+import {Scope} from '../scope'
 import evaluate from '.'
 import {ESTree} from "meriyah";
 

@@ -1,4 +1,4 @@
-import Scope from '../scope';
+import { Scope } from '../scope';
 import { ESTree } from "meriyah";
 export declare function ThisExpression(node: ESTree.ThisExpression, scope: Scope): Generator<never, any, unknown>;
 export declare function ArrayExpression(node: ESTree.ArrayExpression, scope: Scope): Generator<any, any[], any>;

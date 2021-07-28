@@ -1,5 +1,5 @@
 import { assign } from '../share/util'
-import Scope from '../scope'
+import {Scope} from '../scope'
 
 import * as declaration from './declaration'
 import * as expression from './expression'
@@ -31,7 +31,19 @@ export default function* evaluate(node: ESTree.Node, scope: Scope) {
 
   const handler = evaluateOps[node.type]
   if (handler) {
-    return yield* handler(node, scope)
+    try {
+      scope.listener?.beforeNode(node)
+
+      const result = yield* handler(node, scope);
+
+      return scope.listener ? scope.listener.afterNode(node, result, null) : result
+    } catch (error) {
+
+      const rethrow = scope.listener ? scope.listener.afterNode(node, null, error) : error
+      if( rethrow ) {
+        throw rethrow
+      }
+    }
   } else {
     throw new Error(`${node.type} isn't implemented`)
   }

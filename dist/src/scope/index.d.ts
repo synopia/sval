@@ -1,9 +1,15 @@
 import { Variable } from './variable';
-export default class Scope {
+import { ESTree } from "meriyah";
+export interface ExecutionListener {
+    beforeNode: (node: ESTree.Node) => void;
+    afterNode: (node: ESTree.Node, result?: unknown, error?: Error) => unknown;
+}
+export declare class Scope {
     private readonly parent;
     private readonly isolated;
     private readonly context;
-    constructor(parent?: Scope, isolated?: boolean);
+    readonly listener: ExecutionListener | undefined;
+    constructor(parent?: Scope, isolated?: boolean, listener?: ExecutionListener);
     global(): Scope;
     clone(): Scope;
     find(name: string): Variable;

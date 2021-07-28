@@ -183,9 +183,11 @@ class Scope {
     parent;
     isolated;
     context = create(null);
-    constructor(parent = null, isolated = false) {
+    listener;
+    constructor(parent = null, isolated = false, listener = undefined) {
         this.parent = parent;
         this.isolated = isolated;
+        this.listener = listener;
     }
     global() {
         let scope = this;
@@ -1165,7 +1167,17 @@ function evaluate$1(node, scope) {
     }
     const handler = evaluateOps$1[node.type];
     if (handler) {
-        return handler(node, scope);
+        try {
+            scope.listener?.beforeNode(node);
+            const result = handler(node, scope);
+            return scope.listener ? scope.listener.afterNode(node, result, null) : result;
+        }
+        catch (error) {
+            const rethrow = scope.listener ? scope.listener.afterNode(node, null, error) : error;
+            if (rethrow) {
+                throw rethrow;
+            }
+        }
     }
     else {
         throw new Error(`${node.type} isn't implemented`);
@@ -2182,7 +2194,17 @@ function* evaluate(node, scope) {
     }
     const handler = evaluateOps[node.type];
     if (handler) {
-        return yield* handler(node, scope);
+        try {
+            scope.listener?.beforeNode(node);
+            const result = yield* handler(node, scope);
+            return scope.listener ? scope.listener.afterNode(node, result, null) : result;
+        }
+        catch (error) {
+            const rethrow = scope.listener ? scope.listener.afterNode(node, null, error) : error;
+            if (rethrow) {
+                throw rethrow;
+            }
+        }
     }
     else {
         throw new Error(`${node.type} isn't implemented`);

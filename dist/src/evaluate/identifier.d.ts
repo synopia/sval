@@ -1,4 +1,4 @@
-import Scope from '../scope';
+import { Scope } from '../scope';
 import { ESTree } from "meriyah";
 export interface IdentifierOptions {
     getVar?: boolean;

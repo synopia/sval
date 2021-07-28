@@ -1,5 +1,5 @@
 import { VarKind } from '../scope/variable';
-import Scope from '../scope';
+import { Scope } from '../scope';
 import { ESTree } from "meriyah";
 export declare function FunctionDeclaration(node: ESTree.FunctionDeclaration, scope: Scope): any;
 export interface VariableDeclarationOptions {

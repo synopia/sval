@@ -1,6 +1,6 @@
 import { BREAK, CONTINUE, RETURN, AWAIT } from '../share/const'
 import { hoist, pattern, ForXHandler } from './helper'
-import Scope from '../scope'
+import {Scope} from '../scope'
 import evaluate from '.'
 import {ESTree} from "meriyah";
 import {getAsyncIterator} from "../share/util";

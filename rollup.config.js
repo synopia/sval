@@ -14,6 +14,13 @@ export default [
     external: ['meriyah'],
     plugins: [
       json(),
+      typescript({
+        tsconfigOverride: {
+          compilerOptions: {
+            target: 'esnext'
+          }
+        }
+      })
     ]
   },
 ]

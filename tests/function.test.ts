@@ -1,7 +1,7 @@
 import {Sval} from '../src'
 
 describe('testing src/index.ts', () => {
-  it('should excute function normally', () => {  
+  it('should execute function normally', () => {
     const interpreter = new Sval()
     interpreter.run('!function(){exports.a=1}()')
     expect(interpreter.exports.a).toBe(1)
@@ -63,7 +63,7 @@ describe('testing src/index.ts', () => {
     expect(interpreter.exports.res).toEqual([1, 2, 3])
   })
 
-  it('should excute async function normally', done => {  
+  it('should execute async function normally', done => {
     const interpreter = new Sval()
     interpreter.import({ expect, done })
     interpreter.run(`
@@ -78,7 +78,7 @@ describe('testing src/index.ts', () => {
       }
     `)
   })
-  it('should excute async function normally 2', done => {  
+  it('should execute async function normally 2', done => {
     const interpreter = new Sval()
     interpreter.import({ getItem, expect, done })
     interpreter.run(`
@@ -97,7 +97,7 @@ describe('testing src/index.ts', () => {
     }
   })
 
-  it('should excute async function with params', done => {  
+  it('should execute async function with params', done => {
     const interpreter = new Sval()
     interpreter.import({ getItem, expect, done })
     interpreter.run(`
@@ -116,7 +116,7 @@ describe('testing src/index.ts', () => {
     }
   })
 
-  it('should excute async generator normally', done => {  
+  it('should execute async generator normally', done => {
     const interpreter = new Sval()
     interpreter.import({ getItem, expect, done })
     interpreter.run(`

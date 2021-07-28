@@ -4,7 +4,7 @@ import { runAsync, runAsyncOptions } from '../share/async'
 import { define, inherits, assign } from '../share/util'
 import { Identifier } from '../evaluate_n/identifier'
 import { BlockStatement } from './statement'
-import Scope from '../scope'
+import {Scope} from '../scope'
 import {ESTree} from "meriyah";
 import evaluate from '.'
 

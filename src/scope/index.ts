@@ -1,11 +1,18 @@
 import { NOINIT, DEADZONE } from '../share/const'
 import { Variable, Var, Prop } from './variable'
 import { create, define } from '../share/util'
+import {ESTree} from "meriyah";
+
+
+export interface ExecutionListener {
+  beforeNode:(node: ESTree.Node)=>void
+  afterNode:(node: ESTree.Node, result?: unknown, error?: Error)=>unknown
+}
 
 /**
  * Scope simulation class
  */
-export default class Scope {
+export class Scope {
   /**
    * The parent scope along the scope chain
    * @private
@@ -27,17 +34,22 @@ export default class Scope {
    */
   private readonly context: { [key: string]: Var } = create(null)
 
+  readonly listener: ExecutionListener | undefined
+
   /**
    * Create a simulated scope
    * @param parent the parent scope along the scope chain (default: null)
    * @param isolated true for function scope or false for block scope (default: false)
+   * @param listener that gets informed when start / end a node
    */
   constructor(
     parent: Scope = null,
     isolated: boolean = false,
+    listener: ExecutionListener = undefined
   ) {
     this.parent = parent
     this.isolated = isolated
+    this.listener = listener
   }
 
   /**

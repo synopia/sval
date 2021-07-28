@@ -3,7 +3,7 @@ import { VarKind } from '../scope/variable'
 import { Identifier } from './identifier'
 import { assign } from '../share/util'
 import { pattern } from './helper'
-import Scope from '../scope'
+import {Scope} from '../scope'
 import evaluate from '.'
 import {ESTree} from "meriyah";
 
