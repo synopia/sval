@@ -321,6 +321,40 @@ describe('testing src/expression.ts', () => {
     expect(interpreter.exports.result).toEqual(1);
   })
 
+  it('should call methods with undefined and null', () => {
+    const interpreter = new Sval()
+    const outerUnd = (msg)=>{
+      expect(msg).toBeUndefined()
+    }
+    const outerNull = (msg)=>{
+      expect(msg).toBeNull()
+    }
+    interpreter.import({outerUnd, outerNull})
+    interpreter.run(`
+      const a = undefined
+      const b = null
+      outerUnd(a)
+      outerNull(b)
+      
+      const callX = (x,y)=>{
+        exports.x = x 
+        exports.y = y 
+      }
+      const callU = (u,v)=>{
+        exports.u = u 
+        exports.v = v 
+      }
+
+      callX(undefined,null) 
+      callU(a,b) 
+    `)
+
+    expect(interpreter.exports.x).toBeUndefined()
+    expect(interpreter.exports.y).toBeNull()
+    expect(interpreter.exports.u).toBeUndefined()
+    expect(interpreter.exports.v).toBeNull()
+  })
+
   it('should support method call with computed name', () => {  
     const interpreter = new Sval()
     interpreter.run(`

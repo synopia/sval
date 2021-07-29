@@ -32,14 +32,14 @@ export default function* evaluate(node: ESTree.Node, scope: Scope) {
   const handler = evaluateOps[node.type]
   if (handler) {
     try {
-      scope.listener?.beforeNode(node)
+      scope.beforeNode(node)
 
       const result = yield* handler(node, scope);
 
-      return scope.listener ? scope.listener.afterNode(node, result, null) : result
+      return scope.afterNode(node, result)
     } catch (error) {
 
-      const rethrow = scope.listener ? scope.listener.afterNode(node, null, error) : error
+      const rethrow = scope.afterNodeError(node, error)
       if( rethrow ) {
         throw rethrow
       }

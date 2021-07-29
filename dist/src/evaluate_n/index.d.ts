@@ -1,3 +1,3 @@
 import { Scope } from '../scope';
 import { ESTree } from "meriyah";
-export default function evaluate(node: ESTree.Node, scope: Scope): any;
+export default function evaluate(node: ESTree.Node, scope: Scope): unknown;

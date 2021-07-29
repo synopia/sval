@@ -1,24 +1,27 @@
 import {ESTree, Options, parseScript} from "meriyah";
 import {assign, createSandBox, getOwnNames, globalObj} from './share/util'
 import {version} from '../package.json'
-import {Scope} from './scope'
+import {ExecutionListener, Scope} from './scope'
 import {hoist} from './evaluate_n/helper'
 import evaluate from './evaluate_n'
 
 export type SvalOptions = Options & {
   sandBox?: boolean
+  executionListener?: ExecutionListener
 }
 
 export class Sval {
   static version: string = version
 
-  private options: Options = {}
-  private scope = new Scope(null, true)
-
+  readonly options: Options = {}
+  readonly scope : Scope
   exports: { [name: string]: any } = {}
 
   constructor(options: SvalOptions = {}) {
-    let { sandBox = true } = options
+    this.options = options
+    this.scope = new Scope(null, true, options.executionListener)
+
+    const { sandBox = true } = options
 
     if (sandBox) {
       // Shallow clone to create a sandbox
@@ -62,7 +65,10 @@ export class Sval {
     } else {
       ast = code
     }
+    this.scope.startHoisting()
     hoist(ast, this.scope)
+    this.scope.endHoisting()
+
     evaluate(ast, this.scope)
   }
 }

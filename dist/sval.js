@@ -184,10 +184,46 @@ class Scope {
     isolated;
     context = create(null);
     listener;
+    _isHoisting = false;
     constructor(parent = null, isolated = false, listener = undefined) {
         this.parent = parent;
         this.isolated = isolated;
         this.listener = listener;
+    }
+    beforeNode(node) {
+        if (!this.listener && this.parent) {
+            this.parent.beforeNode(node);
+        }
+        else if (this.listener) {
+            this.listener.beforeNode(node);
+        }
+    }
+    afterNode(node, result) {
+        if (!this.listener && this.parent) {
+            return this.parent.afterNode(node, result);
+        }
+        else if (this.listener) {
+            return this.listener.afterNode(node, result);
+        }
+        return result;
+    }
+    afterNodeError(node, error) {
+        if (!this.listener && this.parent) {
+            return this.parent.afterNodeError(node, error);
+        }
+        else if (this.listener) {
+            return this.listener.afterNodeError(node, error);
+        }
+        return error;
+    }
+    isHoisting() {
+        return this._isHoisting;
+    }
+    startHoisting() {
+        this._isHoisting = true;
+    }
+    endHoisting() {
+        this._isHoisting = false;
     }
     global() {
         let scope = this;
@@ -1168,12 +1204,12 @@ function evaluate$1(node, scope) {
     const handler = evaluateOps$1[node.type];
     if (handler) {
         try {
-            scope.listener?.beforeNode(node);
+            scope.beforeNode(node);
             const result = handler(node, scope);
-            return scope.listener ? scope.listener.afterNode(node, result, null) : result;
+            return scope.afterNode(node, result);
         }
         catch (error) {
-            const rethrow = scope.listener ? scope.listener.afterNode(node, null, error) : error;
+            const rethrow = scope.afterNodeError(node, error);
             if (rethrow) {
                 throw rethrow;
             }
@@ -2195,12 +2231,12 @@ function* evaluate(node, scope) {
     const handler = evaluateOps[node.type];
     if (handler) {
         try {
-            scope.listener?.beforeNode(node);
+            scope.beforeNode(node);
             const result = yield* handler(node, scope);
-            return scope.listener ? scope.listener.afterNode(node, result, null) : result;
+            return scope.afterNode(node, result);
         }
         catch (error) {
-            const rethrow = scope.listener ? scope.listener.afterNode(node, null, error) : error;
+            const rethrow = scope.afterNodeError(node, error);
             if (rethrow) {
                 throw rethrow;
             }
@@ -2814,10 +2850,12 @@ function ForXHandler(node, scope, options) {
 class Sval {
     static version = version;
     options = {};
-    scope = new Scope(null, true);
+    scope;
     exports = {};
     constructor(options = {}) {
-        let { sandBox = true } = options;
+        this.options = options;
+        this.scope = new Scope(null, true, options.executionListener);
+        const { sandBox = true } = options;
         if (sandBox) {
             const win = createSandBox();
             this.scope.let('window', win);
@@ -2855,7 +2893,9 @@ class Sval {
         else {
             ast = code;
         }
+        this.scope.startHoisting();
         hoist(ast, this.scope);
+        this.scope.endHoisting();
         evaluate$1(ast, this.scope);
     }
 }

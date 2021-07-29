@@ -6,7 +6,8 @@ import {ESTree} from "meriyah";
 
 export interface ExecutionListener {
   beforeNode:(node: ESTree.Node)=>void
-  afterNode:(node: ESTree.Node, result?: unknown, error?: Error)=>unknown
+  afterNode:(node: ESTree.Node, result: unknown)=>unknown
+  afterNodeError:(node: ESTree.Node, error: Error)=>Error|undefined
 }
 
 /**
@@ -34,7 +35,8 @@ export class Scope {
    */
   private readonly context: { [key: string]: Var } = create(null)
 
-  readonly listener: ExecutionListener | undefined
+  listener: ExecutionListener | undefined
+  private _isHoisting = false
 
   /**
    * Create a simulated scope
@@ -50,6 +52,42 @@ export class Scope {
     this.parent = parent
     this.isolated = isolated
     this.listener = listener
+  }
+
+  beforeNode(node: ESTree.Node) {
+    if( !this.listener && this.parent ) {
+      this.parent.beforeNode(node)
+    } else if( this.listener ) {
+      this.listener.beforeNode(node)
+    }
+  }
+
+  afterNode(node: ESTree.Node, result?: unknown): unknown {
+    if( !this.listener && this.parent ) {
+      return this.parent.afterNode(node, result)
+    } else if( this.listener ) {
+      return this.listener.afterNode(node, result)
+    }
+    return result
+  }
+
+  afterNodeError(node: ESTree.Node, error?: Error): Error|undefined {
+    if( !this.listener && this.parent ) {
+      return this.parent.afterNodeError(node, error)
+    } else if( this.listener ) {
+      return this.listener.afterNodeError(node, error)
+    }
+    return error
+  }
+
+  isHoisting() {
+    return this._isHoisting
+  }
+  startHoisting() {
+    this._isHoisting = true
+  }
+  endHoisting() {
+    this._isHoisting = false
   }
 
   /**

@@ -1,11 +1,13 @@
 import { ESTree, Options } from "meriyah";
+import { ExecutionListener, Scope } from './scope';
 export declare type SvalOptions = Options & {
     sandBox?: boolean;
+    executionListener?: ExecutionListener;
 };
 export declare class Sval {
     static version: string;
-    private options;
-    private scope;
+    readonly options: Options;
+    readonly scope: Scope;
     exports: {
         [name: string]: any;
     };

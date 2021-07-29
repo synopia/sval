@@ -4,6 +4,7 @@ describe('testing src/index.ts', () => {
   it('should declare var normally', () => {  
     const interpreter = new Sval()
     const code = `
+      var aNull = null
       var a
       var a = 1
       var b = 2
@@ -42,6 +43,7 @@ describe('testing src/index.ts', () => {
         }
       }
 
+      exports.aNull = aNull
       exports.a = a
       exports.b = b
       exports.c = c
@@ -52,9 +54,14 @@ describe('testing src/index.ts', () => {
       exports.h2 = h2
       exports.h3 = h3
       exports.h4 = h4
+      exports.foo = String(undefined)
+      exports.foo2 = String(null)
     `
     interpreter.run(`!async function(){${code}}()`) // also test for generator env
     interpreter.run(code)
+    expect(interpreter.exports.foo).toEqual("undefined")
+    expect(interpreter.exports.foo2).toEqual("null")
+    expect(interpreter.exports.aNull).toBeNull()
     expect(interpreter.exports.a).toBe(1)
     expect(interpreter.exports.b).toBe(2)
     expect(interpreter.exports.c).toBeUndefined()
@@ -71,6 +78,7 @@ describe('testing src/index.ts', () => {
     const interpreter = new Sval()
     const code = `
       let a = 1
+      let bNull = null
       let b
       let c = function() {
         return 'c'
@@ -79,6 +87,7 @@ describe('testing src/index.ts', () => {
         return 'd'
       }
       exports.a = a
+      exports.bNull = bNull
       exports.b = b
       exports.c = c
       exports.d = d
@@ -86,6 +95,7 @@ describe('testing src/index.ts', () => {
     interpreter.run(`!async function(){${code}}()`) // also test for generator env
     interpreter.run(code)
     expect(interpreter.exports.a).toBe(1)
+    expect(interpreter.exports.bNull).toBeNull()
     expect(interpreter.exports.b).toBeUndefined()
     expect(interpreter.exports.c()).toBe('c')
     expect(interpreter.exports.d()).toBe('d')

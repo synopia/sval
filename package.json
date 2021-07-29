@@ -9,6 +9,7 @@
   "type": "module",
 
   "scripts": {
+    "bu": "rollup -c ",
     "build": "npm test && rollup -c ",
     "start": "node scripts && rollup -c ",
     "test": "node scripts && umi-test --coverage",
