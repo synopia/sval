@@ -35,7 +35,7 @@ export function* ObjectPattern(node: ESTree.ObjectPattern, scope: Scope, options
     } else if (property.type === 'Property') {
       let key: string
       if (property.computed) {
-        key = yield* evaluate(property.key, scope)
+        key = yield* evaluate(property.key, scope) as any
       } else {
         key = (property.key as ESTree.Identifier).name
       }

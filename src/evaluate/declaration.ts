@@ -99,7 +99,7 @@ export function* MethodDefinition(node: ESTree.MethodDefinition, scope: Scope, o
 
   let key: string
   if (node.computed) {
-    key = yield* evaluate(node.key, scope)
+    key = yield* evaluate(node.key, scope) as any
   } else if (node.key.type === 'Identifier') {
     key = node.key.name
   } else {

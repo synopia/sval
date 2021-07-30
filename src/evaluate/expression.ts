@@ -41,7 +41,7 @@ export function* ObjectExpression(node: ESTree.ObjectExpression, scope: Scope) {
       let key: string
       const propKey = (property as any).key
       if ((property as any).computed) {
-        key = yield* evaluate(propKey, scope)
+        key = yield* evaluate(propKey, scope) as any
       } else {
         if (propKey.type === 'Identifier') {
           key = propKey.name
@@ -50,7 +50,7 @@ export function* ObjectExpression(node: ESTree.ObjectExpression, scope: Scope) {
         }
       }
   
-      const value = yield* evaluate((property as any).value, scope)
+      const value = yield* evaluate((property as any).value, scope) as any
   
       const propKind = (property as any).kind
       if (propKind === 'init') {
@@ -146,8 +146,8 @@ export function* UpdateExpression(node: ESTree.UpdateExpression, scope: Scope) {
 }
 
 export function* BinaryExpression(node: ESTree.BinaryExpression, scope: Scope) {
-  const left = yield* evaluate(node.left, scope)
-  const right = yield* evaluate(node.right, scope)
+  const left = yield* evaluate(node.left, scope) as any
+  const right = yield* evaluate(node.right, scope) as any
 
   switch (node.operator) {
     case '==': return left == right
@@ -178,7 +178,7 @@ export function* BinaryExpression(node: ESTree.BinaryExpression, scope: Scope) {
 }
 
 export function* AssignmentExpression(node: ESTree.AssignmentExpression, scope: Scope) {
-  const value = yield* evaluate(node.right, scope)
+  const value = yield* evaluate(node.right, scope) as any
 
   const left = node.left
 
@@ -249,7 +249,7 @@ export function* MemberExpression(
 
   let key: string
   if (node.computed) {
-    key = yield* evaluate(node.property, scope)
+    key = yield* evaluate(node.property, scope) as any
   } else {
     key = (node.property as ESTree.Identifier).name
   }
@@ -294,7 +294,7 @@ export function* CallExpression(node: ESTree.CallExpression, scope: Scope) {
     // get key
     let key: string
     if (node.callee.computed) {
-      key = yield* evaluate(node.callee.property, scope)
+      key = yield* evaluate(node.callee.property, scope) as any
     } else {
       key = (node.callee.property as ESTree.Identifier).name
     }
@@ -362,7 +362,7 @@ export function* CallExpression(node: ESTree.CallExpression, scope: Scope) {
 }
 
 export function* NewExpression(node: ESTree.NewExpression, scope: Scope) {
-  const constructor = yield* evaluate(node.callee, scope)
+  const constructor = yield* evaluate(node.callee, scope) as any
 
   if (typeof constructor !== 'function') {
     let name: string
@@ -429,7 +429,7 @@ export function* TemplateLiteral(node: ESTree.TemplateLiteral, scope: Scope) {
 }
 
 export function* TaggedTemplateExpression(node: ESTree.TaggedTemplateExpression, scope: Scope) {
-  const tagFunc = yield* evaluate(node.tag, scope)
+  const tagFunc = yield* evaluate(node.tag, scope) as any
 
   const quasis = node.quasi.quasis
   const str = quasis.map(v => v.value.cooked)

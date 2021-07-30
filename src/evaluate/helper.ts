@@ -243,7 +243,7 @@ export function* createClass(
   node: ESTree.ClassDeclaration | ESTree.ClassExpression,
   scope: Scope,
 ) {
-  const superClass = yield* evaluate(node.superClass, scope)
+  const superClass = yield* evaluate(node.superClass, scope) as any
 
   let klass = function () {
     if (superClass) {

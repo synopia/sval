@@ -192,7 +192,7 @@ export function* ForStatement(node: ESTree.ForStatement, scope: Scope) {
 }
 
 export function* ForInStatement(node: ESTree.ForInStatement, scope: Scope) {
-  for (const value in yield* evaluate(node.right, scope)) {
+  for (const value in yield* evaluate(node.right, scope)  as any) {
     const result = yield* ForXHandler(node, scope, { value })
     if (result === BREAK) {
       break
@@ -205,7 +205,7 @@ export function* ForInStatement(node: ESTree.ForInStatement, scope: Scope) {
 }
 
 export function* ForOfStatement(node: ESTree.ForOfStatement, scope: Scope) {
-  const right = yield* evaluate(node.right, scope)
+  const right = yield* evaluate(node.right, scope)  as any
   /*<remove>*/
   if ((node as any).await) {
     const iterator = getAsyncIterator(right)

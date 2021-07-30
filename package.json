@@ -5,9 +5,8 @@
   "main": "dist/sval.js",
   "module": "dist/sval.js",
   "unpkg": "dist/sval.min.js",
-  "types": "types/index.d.ts",
+  "types": "dist/src/index.d.ts",
   "type": "module",
-
   "scripts": {
     "bu": "rollup -c ",
     "build": "npm test && rollup -c ",
